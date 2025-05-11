@@ -37,8 +37,11 @@ public struct URLMatcher {
     /// - Returns: A `URLMatch` if a pattern matches the URL; otherwise, `nil`.
     /// 
     public func matchURL(_ url: URL) -> URLMatch? {
-        guard let parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+        guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return nil
+        }
+        if parts.host == "" {
+            parts.host = nil
         }
         for pattern in patterns {
             if let parameters = matchURL(url, components: parts, for: pattern) {
@@ -79,7 +82,7 @@ public struct URLMatcher {
             return nil
         }
 
-        let path = url.pathComponents.filter { $0 != "/" }
+        let path = components.path.split(separator: "/").map(String.init)
         guard path.count == pattern.path.count else {
             return nil
         }

@@ -16,6 +16,7 @@ class URLMatchingTests {
     private enum DeepLinkID {
         case cast
         case movieGallery
+        case tabB
     }
 
     private let patterns = [
@@ -35,6 +36,13 @@ class URLMatchingTests {
             id: DeepLinkID.cast,
             scheme: "moviedb",
             path: ["cast"]
+        ),
+
+        // "beenlink:tab/b"
+        URLMatchPattern(
+            id: DeepLinkID.tabB,
+            scheme: "beenlink",
+            path: ["tab", "b"]
         )
     ]
 
@@ -66,6 +74,35 @@ class URLMatchingTests {
         #expect(match.movieID is Int, "Movie ID should be an integer.")
         #expect(match.movieID as? Int == 123, "Movie ID should be 123.")
         #expect(match.pageID as? Int == 4, "Page ID should be 4.")
+        #expect(match.dummy == nil)
+    }
+
+    /// Tests that a valid deep link URL correctly matches a pattern and extracts expected values.
+    ///
+    /// This test verifies that the URL matching engine correctly identifies a matching pattern
+    /// and extracts typed values such as `movieID` and `pageID` from the URL components.
+    ///
+    @Test("Matching scheme URLs", arguments: [
+        URL(vouchedFor: "beenlink:tab/b"),
+        URL(vouchedFor: "beenlink:/tab/b"),
+        URL(vouchedFor: "beenlink:///tab/b")
+    ])
+    func matchingSchemeURLs(url: URL) {
+        let matcher = URLMatcher(patterns: patterns)
+        guard let match = matcher.matchURL(url) else {
+            Issue.record("No match found")
+            return
+        }
+
+        switch match.id.switchable {
+        case DeepLinkID.tabB:
+            break
+        default:
+            Issue.record("Incorrect pattern ID match")
+        }
+
+        #expect(match.id == DeepLinkID.tabB, "The correct pattern ID should be returned.")
+        #expect(match.id != DeepLinkID.cast, "The correct pattern ID should be returned.")
         #expect(match.dummy == nil)
     }
 
