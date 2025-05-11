@@ -47,12 +47,26 @@ class URLMatchingTests {
     func matchingURLs() {
         let url = URL(vouchedFor: "moviedb://host/movies/123/gallery?page=4")
         let matcher = URLMatcher(patterns: patterns)
-        let match = matcher.matchURL(url)
-        #expect(match != nil, "A match should be returned.")
-        #expect(match?.movieID is Int, "Movie ID should be an integer.")
-        #expect(match?.movieID as? Int == 123, "Movie ID should be 123.")
-        #expect(match?.pageID as? Int == 4, "Page ID should be 4.")
-        #expect(match?.dummy == nil)
+        guard let match = matcher.matchURL(url) else {
+            Issue.record("No match found")
+            return
+        }
+
+        switch match.id.switchable {
+        case DeepLinkID.movieGallery:
+            break
+        case DeepLinkID.cast:
+            Issue.record("Incorrect pattern ID match")
+        default:
+            Issue.record("Incorrect pattern ID match")
+        }
+
+        #expect(match.id == DeepLinkID.movieGallery, "The correct pattern ID should be returned.")
+        #expect(match.id != DeepLinkID.cast, "The correct pattern ID should be returned.")
+        #expect(match.movieID is Int, "Movie ID should be an integer.")
+        #expect(match.movieID as? Int == 123, "Movie ID should be 123.")
+        #expect(match.pageID as? Int == 4, "Page ID should be 4.")
+        #expect(match.dummy == nil)
     }
 
     /// Tests that a malformed or incomplete URL does not match any defined patterns.

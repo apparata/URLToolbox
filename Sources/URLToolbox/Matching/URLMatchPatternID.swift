@@ -21,4 +21,32 @@ public struct URLMatchPatternID: ExpressibleByStringLiteral, Hashable {
     public init(_ id: AnyHashable) {
         self.id = id
     }
+
+    public var switchable: Any {
+        id.base
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    public static func == (lhs: URLMatchPatternID, rhs: URLMatchPatternID) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public static func == <T: Hashable>(lhs: URLMatchPatternID, rhs: T) -> Bool {
+        lhs.id == rhs as AnyHashable
+    }
+
+    public static func == <T: Hashable>(lhs: T, rhs: URLMatchPatternID) -> Bool {
+        lhs as AnyHashable == rhs.id
+    }
+
+    public static func != <T: Hashable>(lhs: URLMatchPatternID, rhs: T) -> Bool {
+        lhs.id != rhs as AnyHashable
+    }
+
+    public static func != <T: Hashable>(lhs: T, rhs: URLMatchPatternID) -> Bool {
+        lhs as AnyHashable != rhs.id
+    }
 }

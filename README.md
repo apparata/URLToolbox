@@ -48,6 +48,14 @@ let movieGalleryURL = URL(string: "moviedb://host/movies/123/gallery?page=4")!
 let match = matcher.matchURL(movieGalleryURL)
 
 if let match {
+
+    switch match.id.switchable {
+    case DeepLinkID.movieGallery:
+        print("This is the movie gallery")
+    case DeepLinkID.cast:
+        print("This is the cast")
+    }
+
     dump(match.parameters)
     dump(match.id)
     dump(match["movieID"])
