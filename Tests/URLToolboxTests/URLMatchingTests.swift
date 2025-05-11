@@ -78,10 +78,6 @@ class URLMatchingTests {
     }
 
     /// Tests that a valid deep link URL correctly matches a pattern and extracts expected values.
-    ///
-    /// This test verifies that the URL matching engine correctly identifies a matching pattern
-    /// and extracts typed values such as `movieID` and `pageID` from the URL components.
-    ///
     @Test("Matching scheme URLs", arguments: [
         URL(vouchedFor: "beenlink:tab/b"),
         URL(vouchedFor: "beenlink:/tab/b"),
