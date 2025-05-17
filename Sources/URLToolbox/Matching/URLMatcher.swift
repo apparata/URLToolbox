@@ -29,13 +29,33 @@ public struct URLMatcher {
         self.patterns = patterns
     }
 
+    /// Creates a `URLMatcher` using a result builder for cleaner pattern declaration.
+    ///
+    /// This initializer allows the caller to use the `@URLMatchPatternBuilder` result builder
+    /// to define the URL patterns in a declarative, DSL-style syntax. The builder returns
+    /// an array of `URLMatchPattern` instances used to initialize the matcher.
+    ///
+    /// - Parameter patternBuilder: A closure annotated with `@URLMatchPatternBuilder` that
+    ///   returns an array of `URLMatchPattern` instances to be used for matching.
+    ///
+    /// ### Example
+    /// ```swift
+    /// let matcher = URLMatcher {
+    ///     URLMatchPattern(path: ["users", .string("id")])
+    ///     URLMatchPattern(path: ["posts", .int("postId")])
+    /// }
+    /// ```
+    public init(@URLMatchPatternBuilder _ patternBuilder: () -> [URLMatchPattern]) {
+        self.patterns = patternBuilder()
+    }
+
     // MARK: Match URL
 
     /// Attempts to match a given URL against the stored patterns.
     ///
     /// - Parameter url: The URL to match against the defined patterns.
     /// - Returns: A `URLMatch` if a pattern matches the URL; otherwise, `nil`.
-    /// 
+    ///
     public func matchURL(_ url: URL) -> URLMatch? {
         guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return nil
